@@ -1,0 +1,416 @@
+#include<iostream>
+#include<fstream>
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+
+using namespace std;
+class bus
+{
+int id,k;
+
+double fare,tkt=100;
+char pt[100],reach[100],time[20];
+int n;
+int price;
+char name[50];
+public:
+void book()
+{
+    cout<<"\nEnter Bus Id            : ";
+    cin>>id;
+    cin.ignore(2,'\n');
+    cout<<"\nEnter Starting Location : ";
+    cin.getline(pt,100);
+    cout<<"\nEnter Reach Point       : ";
+    cin.getline(reach,100);
+    cout<<"\nEnter CatchupTime       : ";
+    cin.getline(time,20);
+    cout<<"\nEnter The Fare(Price)   : ";
+    cin>>fare;
+}
+void display()
+{
+    cout<<"\nBus Id             :"<<id;
+    cout<<"\nStarting Location  :"<<pt;
+    cout<<"\nReach Point        :"<<reach;
+    cout<<"\nCatchupTime        :"<<time;
+    cout<<"\nBus Fare           :"<<fare;
+    cout<<endl;
+}
+int getfair()
+{
+    return fare;
+}
+void booktkt()
+{
+
+   // cout<<"\nEnter The Bus Id You Want To Travel : ";
+    //cin>>k;
+    cout<<"\nMaximum Seats      :"<<tkt;
+
+    cout<<"\n\nEnter Your Details  :-:";
+    cin.ignore(4,'\n');
+    cout<<"\n\nEnter your Name : ";
+    cin.getline(name,50);
+    cout<<"\nEnter The Seat No You Want To Book  :";
+    cin>>n;
+    cout<<"\nPAY Amount "<<"Rs. "<<fare<<" :";
+
+
+
+}
+
+void displaytkt()
+{
+   cout<<"\nYour Name      : "<<name;
+   cout<<"\nBooked Seat No : "<<n;
+   cout<<"\nPrice Paid     : "<<fare;
+   cout<<endl;
+}
+int getid()
+{
+    return id;
+}
+int getseat()
+{
+    return n;
+}
+};
+main()
+{
+
+bus ob;
+int ch,id2;
+system("cls");
+
+for(int ch=1;ch<=7;ch++)
+{  system("cls");
+    cout<<"\n************************************************************************************************************************";
+cout<<"\n                  *************************************************************************";
+cout<<"\n                                    Welcome to ";
+cout<<"\n                               AyraRohit Booking Center";
+cout<<"\n************************************************************************************************************************";
+cout<<"\n                     **************************************************************************";
+
+cout<<"\n1.Add Bus";
+cout<<"\n2.Display Particular Bus";
+cout<<"\n3.Display All Bus";
+cout<<"\n4.Delete Bus";
+cout<<"\n5.Reedit Information";
+cout<<"\n6.Book Ticket/See Booked Ticket";
+cout<<"\n7.Exit";
+cout<<endl;
+cout<<"\nEnter Your Choice : ";
+cin>>ch;
+switch(ch)
+{
+case 1:
+    {
+      ofstream fout;
+      fout.open("businfo1.dat",ios::binary|ios::app);
+      ob.book();
+      fout.write((char*)&ob,sizeof(ob));
+      fout.close();
+      break;
+    }
+case 2:
+    {
+        int chk=0;
+        cout<<"\nEnter The Bus ID : ";
+        cin>>id2;
+        ifstream fin("businfo1.dat",ios::binary);
+        while(fin.read((char*)&ob,sizeof(ob)))
+        {
+            if(ob.getid()==id2)
+           {
+
+            ob.display();
+            chk=1;
+           }
+        }
+        if(chk==0)
+        {
+            cout<<"\n   No Bus Added\n";
+        }
+        fin.close();
+        cout<<"\nPress Any Key ";
+        getch();
+        break;
+    }
+case 3:
+    {
+        int chk=0;
+        ifstream fin;
+        fin.open("businfo1.dat",ios::binary);
+        while(fin.read((char*)&ob,sizeof(ob)))
+        {
+            ob.display();
+            chk=1;
+        }
+        if(chk==0)
+        {
+            cout<<" \n  No Bus Added\n";
+        }
+        fin.close();
+        cout<<"\nPress Any Key ";
+        getch();
+        break;
+    }
+case 4:
+    {
+        int chk=0;
+        cout<<"\nEnter The Bus ID : ";
+        cin>>id2;
+        ifstream fin1("businfo1.dat",ios::binary);
+        ofstream fout2("temp1.dat",ios::binary);
+        while(fin1.read((char*)&ob,sizeof(ob)))
+        {
+            if(ob.getid()!=id2)
+            {
+
+                fout2.write((char*)&ob,sizeof(ob));
+
+            }
+
+            else if(ob.getid()==id2)
+            {
+
+              ob.display();
+               cout<<"\nBus Deleted Successfully"<<"\n";
+               chk=1;
+
+            }
+
+
+
+
+
+        }
+           if(chk==0)
+            {
+                cout<<"\n->Bus Not Found\n";
+            }
+        fin1.close();
+        fout2.close();
+        remove("businfo1.dat");
+        rename("temp1.dat","businfo1.dat");
+        cout<<"\nPress Any Key ";
+        getch();
+        break;
+
+
+    }
+case 5:
+    {
+        int n,ch=0;
+        cout<<"\nEnter The ID To Modify  : ";
+        cin>>n;
+
+
+        fstream f("businfo1.dat",ios::in|ios::out|ios::binary);
+        while(f.read((char*)&ob,sizeof(ob)))
+        {
+            if(ob.getid()==n)
+            {
+                int pos = f.tellg()-sizeof(ob);
+                f.seekp(pos,ios::beg);
+                cout<<"\n*Enter The New Details :--\n";
+                ob.book();
+                f.write((char*)&ob,sizeof(ob));
+                ch=1;
+                 cout<<"\nBus Modified";
+                break;
+
+            }
+
+
+        }
+        if(ch==0)
+        {
+            cout<<"\n Bus Not Found :- View common errors in READ ME";
+        }
+        cout<<"\n\nPress Any Key";
+        f.close();
+        getch();
+        break;
+
+
+    }
+case 6:
+    {
+        int s,m;
+        char a[50];
+        int ch;
+        string line,name2;
+       // cout<<"\nEnter Your Choice:\n ";
+        cout<<"\n1.Book Ticket ";
+        cout<<"\n2.See Booked Ticket ";
+        cout<<"\n\nEnter Your Choice : ";
+        cin>>ch;
+
+        if(ch==1)
+        {
+
+    cout<<"\nBuses Avl\n";
+    int k;
+    ifstream fin;
+    fin.open("businfo1.dat",ios::binary);
+    while(fin.read((char*)&ob,sizeof(ob)))
+    {
+        ob.display();
+    }
+  cout<<"\nEnter The Bus Id You Want To Book ";
+  cin>>k;
+  cout<<"\nYou Opted For Bus Id : "<<k;
+
+  ifstream fin2("businfo1.dat",ios::binary);
+  while(fin2.read((char*)&ob,sizeof(ob)))
+  {
+      if(k==ob.getid())
+      {
+    cout<<"\nNo Of Seats Available :- "<<endl;
+
+    //cout<<"\n(*) Indicates Booked Seats "<<endl<<endl;
+    for(int i=1;i<=100;i++)
+    {
+
+    cout<<i<<"\t";
+    if(i%8==0)
+    {
+        cout<<"\n";
+    }
+    else if(i%4==0)
+    {
+        cout<<"\t";
+    }
+
+
+    }
+    cout<<endl;
+    ofstream fout("businfo2.dat",ios::binary|ios::app);
+    ob.booktkt();
+    cout<<"\n\nEnter 1.Yes , 2.No :  ";
+    cin>>m;
+    if(m==1)
+    {
+        cout<<"\nBus Booked Successfully\n";
+    }
+    else
+    {
+        cout<<"\nBus Booking Failed\n";
+        exit(0);
+    }
+
+    fout.write((char*)&ob,sizeof(ob));
+    fout.close();
+    break;
+    }
+
+
+  }
+
+
+    fin.close();
+    fin2.close();
+
+    getch();
+
+   }
+   if(ch==2)
+   {
+       int chk=0;
+
+       ifstream fin1;
+       fin1.open("businfo2.dat",ios::binary);
+
+       while(fin1.read((char*)&ob,sizeof(ob)))
+       {
+        ob.displaytkt();
+        chk=1;
+       }
+
+       fin1.close();
+
+
+       int l,n;
+       if(chk==1)
+
+       {cout<<"\n1.Delete All Transactions";
+       cout<<"\n2.Cancel";
+       cout<<"\nEnter Your Choice : ";
+       cin>>n;
+       if(n==1)
+       {
+       cout<<"\nEnter Any Seat No\n";
+       cin>>l;
+       ifstream fin("businfo2.dat",ios::binary);
+       ofstream fout("temp2.dat",ios::binary);
+       while(fin1.read((char*)&ob,sizeof(ob)))
+        {
+            if(ob.getseat()!=l)
+            {
+
+                fout.write((char*)&ob,sizeof(ob));
+
+            }
+        }
+       cout<<"\ndeleted";
+       getch();
+       fin.close();
+       fout.close();
+       remove("businfo2.dat");
+       rename("temp2.dat","businfo2.dat");
+       break;
+       }
+
+       else
+       {
+           cout<<"\nBus Transaction Failed \n";
+           exit(0);
+       }
+       }
+       else
+      {
+      cout<<"\nNo Bus Transacted\n";
+      }
+      cout<<"\nThanks For Visiting ";
+
+
+getch();
+break;
+   }
+    }
+
+
+
+case 7:
+    {
+     cout<<"\n#Thanks For Using The Application";
+     cout<<"\n\n#Developed By Rohit and Aryan";
+
+     cout<<endl;
+     exit(0);
+
+    }
+default:
+    {
+        cout<<"\nInvalid Input\n";
+        cout<<"\n#Thanks For Using The Application";
+        cout<<"\n#Developed By Rohit and Aryan\n";
+
+
+    }
+    }
+
+//default:
+  //  {
+       // cout<<"\nInvalid Input";
+       // cout<<endl;
+    //}
+
+}
+getch();
+}
+
+
